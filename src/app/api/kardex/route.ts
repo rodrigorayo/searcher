@@ -55,11 +55,8 @@ export async function GET() {
 
     // Sort descending (newest first)
     kardex.sort((a, b) => b.rawDate - a.rawDate);
-    
-    // Remove rawDate before sending to client
-    const sortedKardex = kardex.map(({ rawDate, ...rest }) => rest);
 
-    return NextResponse.json(sortedKardex);
+    return NextResponse.json(kardex);
   } catch (error) {
     console.error('Error fetching Kardex:', error);
     return NextResponse.json({ error: 'Failed to fetch kardex' }, { status: 500 });
