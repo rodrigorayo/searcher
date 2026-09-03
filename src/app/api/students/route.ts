@@ -19,6 +19,7 @@ export async function GET() {
       if (sheetName.toLowerCase().includes('docentes') || sheetName.toLowerCase().includes('estxnivel')) continue;
 
       const sheet = workbook.Sheets[sheetName];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data = xlsx.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
 
       // Scan entire sheet to find student tables

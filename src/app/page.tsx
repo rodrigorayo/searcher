@@ -130,7 +130,7 @@ export default function Home() {
           ) : (
             search.trim() !== '' && !loading && (
               <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-slate-500">
-                <p>No se encontraron estudiantes con "{search}"</p>
+                <p>No se encontraron estudiantes con &quot;{search}&quot;</p>
               </div>
             )
           )}
