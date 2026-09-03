@@ -36,10 +36,13 @@ export default function Home() {
   const filteredStudents = search.trim() === '' 
     ? [] 
     : students.filter(s => {
-        const term = search.toLowerCase();
-        return (
-          s.name.toLowerCase().includes(term) ||
-          s.teacher.toLowerCase().includes(term)
+        const searchTerms = search.toLowerCase().split(/\s+/).filter(Boolean);
+        const studentName = s.name.toLowerCase();
+        const teacherName = s.teacher.toLowerCase();
+        
+        // Verifica que CADA palabra de la búsqueda exista en el nombre del estudiante o del profesor
+        return searchTerms.every(term => 
+          studentName.includes(term) || teacherName.includes(term)
         );
       }).slice(0, 50); // Limit to 50 results for extreme speed/fluidity
 
