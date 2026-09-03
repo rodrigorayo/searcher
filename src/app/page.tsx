@@ -115,18 +115,18 @@ export default function Home() {
                   </p>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-slate-600 sm:text-right mt-3 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
-                  <div className="flex items-center sm:justify-end gap-2">
-                    <BookOpen className="h-4 w-4 text-red-400 flex-shrink-0" />
-                    <span className="truncate">Prof: <strong className="text-[#002b5e]">{student.teacher}</strong></span>
+                <div className="flex flex-col items-start sm:items-end gap-2 text-sm text-slate-600 mt-3 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-1/2">
+                  <div className="flex items-start sm:justify-end gap-2">
+                    <BookOpen className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-left sm:text-right leading-snug text-balance">Prof: <strong className="text-[#002b5e]">{student.teacher}</strong></span>
                   </div>
-                  <div className="flex items-center sm:justify-end gap-2">
-                    <MapPin className="h-4 w-4 text-red-400 flex-shrink-0" />
-                    <span>Aula: <strong className="text-[#002b5e]">{student.room}</strong></span>
+                  <div className="flex items-start sm:justify-end gap-2">
+                    <MapPin className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-left sm:text-right leading-snug">Aula: <strong className="text-[#002b5e]">{student.room}</strong></span>
                   </div>
-                  <div className="flex items-center sm:justify-end gap-2 sm:col-span-2">
-                    <Clock className="h-4 w-4 text-red-400 flex-shrink-0" />
-                    <span>Turno: <strong className="text-[#002b5e]">{student.shift}</strong></span>
+                  <div className="flex items-start sm:justify-end gap-2">
+                    <Clock className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-left sm:text-right leading-snug">Turno: <strong className="text-[#002b5e]">{student.shift}</strong></span>
                   </div>
                 </div>
               </div>
