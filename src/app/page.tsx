@@ -161,8 +161,8 @@ export default function Home() {
 
                   {/* KARDEX EXPANDABLE SECTION */}
                   {isExpanded && (
-                    <div className="bg-slate-50 p-5 border-t border-slate-100">
-                      <h4 className="font-bold text-[#002b5e] mb-3 flex items-center gap-2">
+                    <div className="bg-slate-100 p-5 sm:p-6 border-t border-slate-200 shadow-inner">
+                      <h4 className="font-bold text-[#002b5e] mb-4 flex items-center gap-2">
                         <FileText className="h-5 w-5 text-red-500" />
                         Historial de Kárdex
                       </h4>
@@ -170,25 +170,27 @@ export default function Home() {
                       {studentKardex.length === 0 ? (
                         <p className="text-sm text-slate-500 italic px-2">No hay observaciones registradas para este estudiante.</p>
                       ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           {studentKardex.map((record, i) => (
-                            <div key={i} className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-sm">
-                              <div className="flex flex-wrap justify-between items-start mb-2 gap-2">
-                                <span className="font-semibold text-slate-500 text-xs bg-slate-100 px-2 py-0.5 rounded-md">{record.date}</span>
+                            <div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow text-sm">
+                              <div className="flex flex-wrap justify-between items-start mb-3 gap-2">
+                                <span className="font-semibold text-slate-600 text-xs bg-slate-100 px-2.5 py-1 rounded-md">{record.date}</span>
                                 {record.felicitation && record.felicitation !== "undefined" && record.felicitation.toLowerCase() !== "false" ? (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded-full"><CheckCircle className="h-3 w-3"/> Felicitación</span>
+                                    <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2.5 py-1 rounded-full shadow-sm"><CheckCircle className="h-3.5 w-3.5"/> Felicitación</span>
                                 ) : (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full"><AlertCircle className="h-3 w-3"/> Observación</span>
+                                    <span className="flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-full shadow-sm"><AlertCircle className="h-3.5 w-3.5"/> Observación</span>
                                 )}
                               </div>
                               
                               {record.observation && record.observation !== "undefined" && (
-                                <p className="font-bold text-slate-800 mb-1">{record.observation}</p>
+                                <p className="font-bold text-slate-800 text-base mb-1">{record.observation}</p>
                               )}
                               {record.detail && record.detail !== "undefined" && (
-                                <p className="text-slate-600">{record.detail}</p>
+                                <p className="text-slate-600 leading-relaxed">{record.detail}</p>
                               )}
-                              <p className="text-xs text-slate-400 mt-2 italic">Reportado por: {record.teacher}</p>
+                              <p className="text-xs text-slate-400 mt-3 font-medium flex items-center gap-1">
+                                <User className="h-3 w-3" /> Reportado por: {record.teacher}
+                              </p>
                             </div>
                           ))}
                         </div>
