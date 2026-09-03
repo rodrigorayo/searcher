@@ -208,6 +208,13 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {/* Footer de Créditos */}
+      <footer className="mt-16 pb-6 text-center opacity-80 hover:opacity-100 transition-opacity">
+        <p className="text-blue-200 text-sm font-medium tracking-wide">
+          Diseñado y desarrollado por <span className="text-white font-bold">Rodrigo Martinez</span>
+        </p>
+      </footer>
     </main>
   );
 }
