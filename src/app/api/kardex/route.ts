@@ -26,15 +26,22 @@ export async function GET() {
         if (!studentName) continue;
 
         let dateFormatted = String(row[0] || '');
+        let rawTimestamp = 0;
+        
         if (typeof row[0] === 'number') {
+           rawTimestamp = row[0]; // Excel serial date
            // Convert Excel serial date to readable string
            const parsedDate = xlsx.SSF.parse_date_code(row[0]);
            if (parsedDate) {
-              dateFormatted = `${parsedDate.d}/${parsedDate.m}/${parsedDate.y}`;
+              // Pad day and month with 0 for better looking dates
+              dateFormatted = `${String(parsedDate.d).padStart(2, '0')}/${String(parsedDate.m).padStart(2, '0')}/${parsedDate.y}`;
            }
+        } else if (typeof row[0] === 'string') {
+           rawTimestamp = Date.parse(row[0]) || 0;
         }
 
         kardex.push({
+          rawDate: rawTimestamp,
           date: dateFormatted,
           student: studentName.toUpperCase(),
           observation: String(row[3] || '').trim(),
@@ -46,7 +53,13 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(kardex);
+    // Sort descending (newest first)
+    kardex.sort((a, b) => b.rawDate - a.rawDate);
+    
+    // Remove rawDate before sending to client
+    const sortedKardex = kardex.map(({ rawDate, ...rest }) => rest);
+
+    return NextResponse.json(sortedKardex);
   } catch (error) {
     console.error('Error fetching Kardex:', error);
     return NextResponse.json({ error: 'Failed to fetch kardex' }, { status: 500 });
