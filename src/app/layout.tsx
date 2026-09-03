@@ -14,13 +14,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Buscador Académico | Educación Adventista",
-  description: "Portal rápido de búsqueda de estudiantes, docentes y aulas de la Educación Adventista.",
+  title: "Academic Search | Adventist Education",
+  description: "Fast academic search portal for students, teachers, and classrooms of Adventist Education.",
   robots: { index: false, follow: false },
   openGraph: {
-    title: "Buscador Académico | Educación Adventista",
-    description: "Portal rápido de búsqueda de estudiantes, docentes y aulas.",
-    siteName: "Educación Adventista",
+    title: "Academic Search | Adventist Education",
+    description: "Fast academic search portal for students, teachers, and classrooms.",
+    siteName: "Adventist Education",
   }
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

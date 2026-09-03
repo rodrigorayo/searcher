@@ -73,10 +73,10 @@ export default function Home() {
         {/* Header Section */}
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-1">
-            Educación Adventista
+            Adventist Education
           </h1>
           <h2 className="text-lg sm:text-xl font-bold text-red-500 tracking-wide uppercase">
-            Departamento de Inglés
+            English Department
           </h2>
         </div>
 
@@ -88,7 +88,7 @@ export default function Home() {
           <input
             type="text"
             className="block w-full pl-12 pr-4 py-3.5 rounded-2xl border-0 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-inset focus:ring-red-500 text-lg shadow-lg bg-white placeholder:text-slate-400 transition-all"
-            placeholder="Buscar por estudiante o docente..."
+            placeholder="Search for student or teacher..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -103,15 +103,15 @@ export default function Home() {
         {loading && search === '' && (
           <div className="text-center py-8 text-blue-200 animate-pulse flex flex-col items-center">
             <Loader2 className="h-8 w-8 mb-3 animate-spin text-red-500" />
-            <p>Sincronizando bases de datos...</p>
+            <p>Syncing database...</p>
           </div>
         )}
 
         {!loading && search === '' && (
           <div className="text-center py-8 text-blue-200">
             <GraduationCap className="h-12 w-12 mx-auto mb-3 opacity-40 text-white" />
-            <p className="text-lg font-medium">Escribe un nombre para comenzar.</p>
-            <p className="text-xs sm:text-sm mt-2 opacity-70">Sistema listo. Base de alumnos y Kárdex sincronizados.</p>
+            <p className="text-lg font-medium">Type a name to start searching.</p>
+            <p className="text-xs sm:text-sm mt-2 opacity-70">System ready. Databases synchronized.</p>
           </div>
         )}
 
@@ -140,11 +140,11 @@ export default function Home() {
                     <div className="flex flex-col items-start sm:items-end gap-2 text-sm text-slate-600 mt-2 sm:mt-0 w-full sm:w-1/2">
                       <div className="flex items-start sm:justify-end gap-2">
                         <BookOpen className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-left sm:text-right leading-snug text-balance">Prof: <strong className="text-[#002b5e]">{student.teacher}</strong></span>
+                        <span className="text-left sm:text-right leading-snug text-balance">Teacher: <strong className="text-[#002b5e]">{student.teacher}</strong></span>
                       </div>
                       <div className="flex items-start sm:justify-end gap-2">
                         <MapPin className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-left sm:text-right leading-snug">Aula: <strong className="text-[#002b5e]">{student.room}</strong></span>
+                        <span className="text-left sm:text-right leading-snug">Room: <strong className="text-[#002b5e]">{student.room}</strong></span>
                       </div>
                       <div className="flex flex-row items-center w-full justify-between sm:justify-end sm:gap-4 mt-2 pt-3 border-t sm:border-0 sm:pt-0">
                           <span className="flex items-center gap-1 text-[#002b5e]"><Clock className="h-4 w-4 text-red-400"/> <strong>{student.shift}</strong></span>
@@ -153,7 +153,7 @@ export default function Home() {
                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${studentKardex.length > 0 ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 border border-slate-200'}`}
                           >
                               <FileText className="h-4 w-4" />
-                              Kárdex ({studentKardex.length})
+                              Kardex ({studentKardex.length})
                           </button>
                       </div>
                     </div>
@@ -164,11 +164,11 @@ export default function Home() {
                     <div className="bg-slate-100 p-5 sm:p-6 border-t border-slate-200 shadow-inner">
                       <h4 className="font-bold text-[#002b5e] mb-4 flex items-center gap-2">
                         <FileText className="h-5 w-5 text-red-500" />
-                        Historial de Kárdex
+                        Kardex History
                       </h4>
                       
                       {studentKardex.length === 0 ? (
-                        <p className="text-sm text-slate-500 italic px-2">No hay observaciones registradas para este estudiante.</p>
+                        <p className="text-sm text-slate-500 italic px-2">No observations registered for this student.</p>
                       ) : (
                         <div className="space-y-4">
                           {studentKardex.map((record, i) => (
@@ -176,9 +176,9 @@ export default function Home() {
                               <div className="flex flex-wrap justify-between items-start mb-3 gap-2">
                                 <span className="font-semibold text-slate-600 text-xs bg-slate-100 px-2.5 py-1 rounded-md">{record.date}</span>
                                 {record.felicitation && record.felicitation !== "undefined" && record.felicitation.toLowerCase() !== "false" ? (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2.5 py-1 rounded-full shadow-sm"><CheckCircle className="h-3.5 w-3.5"/> Felicitación</span>
+                                    <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2.5 py-1 rounded-full shadow-sm"><CheckCircle className="h-3.5 w-3.5"/> Commendation</span>
                                 ) : (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-full shadow-sm"><AlertCircle className="h-3.5 w-3.5"/> Observación</span>
+                                    <span className="flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-full shadow-sm"><AlertCircle className="h-3.5 w-3.5"/> Observation</span>
                                 )}
                               </div>
                               
@@ -189,7 +189,7 @@ export default function Home() {
                                 <p className="text-slate-600 leading-relaxed">{record.detail}</p>
                               )}
                               <p className="text-xs text-slate-400 mt-3 font-medium flex items-center gap-1">
-                                <User className="h-3 w-3" /> Reportado por: {record.teacher}
+                                <User className="h-3 w-3" /> Reported by: {record.teacher}
                               </p>
                             </div>
                           ))}
@@ -204,7 +204,7 @@ export default function Home() {
           ) : (
             search.trim() !== '' && !loading && (
               <div className="text-center py-10 bg-[#001f44] rounded-2xl border border-dashed border-blue-800 text-blue-200 shadow-inner">
-                <p>No se encontraron resultados para &quot;{search}&quot;</p>
+                <p>No results found for &quot;{search}&quot;</p>
               </div>
             )
           )}
@@ -214,7 +214,7 @@ export default function Home() {
       {/* Footer de Créditos */}
       <footer className="mt-16 pb-6 text-center opacity-80 hover:opacity-100 transition-opacity">
         <p className="text-blue-200 text-sm font-medium tracking-wide">
-          Diseñado y desarrollado por <span className="text-white font-bold">Rodrigo Martinez</span>
+          Designed and developed by <span className="text-white font-bold">Rodrigo Martinez</span>
         </p>
       </footer>
     </main>
