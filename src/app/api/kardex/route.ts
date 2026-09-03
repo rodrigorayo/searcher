@@ -29,15 +29,23 @@ export async function GET() {
         let rawTimestamp = 0;
         
         if (typeof row[0] === 'number') {
-           rawTimestamp = row[0]; // Excel serial date
-           // Convert Excel serial date to readable string
+           // Parse Excel date
            const parsedDate = xlsx.SSF.parse_date_code(row[0]);
            if (parsedDate) {
-              // Pad day and month with 0 for better looking dates
-              dateFormatted = `${String(parsedDate.d).padStart(2, '0')}/${String(parsedDate.m).padStart(2, '0')}/${parsedDate.y}`;
+              // Convert to standard JS timestamp (milliseconds) for accurate sorting
+              rawTimestamp = new Date(parsedDate.y, parsedDate.m - 1, parsedDate.d, parsedDate.H || 0, parsedDate.M || 0, parsedDate.S || 0).getTime();
+              
+              const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+              dateFormatted = `${parsedDate.d} de ${months[parsedDate.m - 1]}, ${parsedDate.y}`;
            }
         } else if (typeof row[0] === 'string') {
+           // Try parsing string date
            rawTimestamp = Date.parse(row[0]) || 0;
+           if (rawTimestamp > 0) {
+              const d = new Date(rawTimestamp);
+              const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+              dateFormatted = `${d.getDate()} de ${months[d.getMonth()]}, ${d.getFullYear()}`;
+           }
         }
 
         kardex.push({
