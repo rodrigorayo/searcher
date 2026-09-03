@@ -16,6 +16,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Buscador Académico | Educación Adventista",
   description: "Portal rápido de búsqueda de estudiantes, docentes y aulas de la Educación Adventista.",
+  robots: { index: false, follow: false },
   openGraph: {
     title: "Buscador Académico | Educación Adventista",
     description: "Portal rápido de búsqueda de estudiantes, docentes y aulas.",
