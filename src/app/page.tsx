@@ -61,13 +61,15 @@ export default function Home() {
   const [kardex, setKardex] = useState<KardexRecord[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [kardexLoading, setKardexLoading] = useState(false);
+  const [kardexSource, setKardexSource] = useState<'official' | 'copy'>('official');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     const timestamp = Date.now();
     Promise.all([
       fetch(`/api/students?_t=${timestamp}`, { cache: 'no-store' }).then(res => res.json()),
-      fetch(`/api/kardex?_t=${timestamp}`, { cache: 'no-store' }).then(res => res.json())
+      fetch(`/api/kardex?source=official&_t=${timestamp}`, { cache: 'no-store' }).then(res => res.json())
     ]).then(([studentsData, kardexData]) => {
       setStudents(studentsData);
       setKardex(kardexData);
@@ -77,6 +79,23 @@ export default function Home() {
       setLoading(false);
     });
   }, []);
+
+  const handleSourceChange = (newSource: 'official' | 'copy') => {
+    if (newSource === kardexSource) return;
+    setKardexSource(newSource);
+    setKardexLoading(true);
+    const timestamp = Date.now();
+    fetch(`/api/kardex?source=${newSource}&_t=${timestamp}`, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => {
+        setKardex(data);
+        setKardexLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load kardex source", err);
+        setKardexLoading(false);
+      });
+  };
 
   const filteredStudents = search.trim() === '' 
     ? [] 
@@ -100,7 +119,7 @@ export default function Home() {
       <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
         
         {/* Header Section */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-1">
             Adventist Education
           </h1>
@@ -108,6 +127,45 @@ export default function Home() {
             English Department
           </h2>
         </div>
+
+        {/* Database Source Switcher */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-5">
+          <span className="text-xs text-blue-200 font-semibold uppercase tracking-wider">Kardex Source:</span>
+          <div className="bg-[#001f44] p-1 rounded-xl flex items-center border border-blue-900 shadow-md">
+            <button
+              onClick={() => handleSourceChange('official')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                kardexSource === 'official'
+                  ? 'bg-red-500 text-white shadow-sm'
+                  : 'text-blue-300 hover:text-white'
+              }`}
+            >
+              Official Kardex
+            </button>
+            <button
+              onClick={() => handleSourceChange('copy')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                kardexSource === 'copy'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-blue-300 hover:text-white'
+              }`}
+            >
+              <span>Updated Copy (Full Data)</span>
+              {kardexSource === 'copy' && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+            </button>
+          </div>
+          {kardexLoading && (
+            <Loader2 className="h-4 w-4 text-amber-400 animate-spin" />
+          )}
+        </div>
+
+        {/* Banner when using Updated Copy */}
+        {kardexSource === 'copy' && (
+          <div className="mb-5 p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-xs sm:text-sm text-center flex items-center justify-center gap-2 shadow-lg animate-fadeIn">
+            <CheckCircle className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            <span>Now viewing the <strong>Updated Copy</strong> with all unblocked observations (rows beyond 52 included).</span>
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="relative mb-6 shadow-xl">
@@ -121,7 +179,7 @@ export default function Home() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {loading && (
+          {(loading || kardexLoading) && (
             <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
               <Loader2 className="h-6 w-6 text-red-500 animate-spin" />
             </div>
@@ -191,10 +249,19 @@ export default function Home() {
                   {/* KARDEX EXPANDABLE SECTION */}
                   {isExpanded && (
                     <div className="bg-slate-100 p-5 sm:p-6 border-t border-slate-200 shadow-inner">
-                      <h4 className="font-bold text-[#002b5e] mb-4 flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-red-500" />
-                        Kardex History
-                      </h4>
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-bold text-[#002b5e] flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-red-500" />
+                          Kardex History
+                        </h4>
+                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                          kardexSource === 'copy'
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            : 'bg-slate-200 text-slate-700'
+                        }`}>
+                          {kardexSource === 'copy' ? 'Updated Copy' : 'Official Centralizer'}
+                        </span>
+                      </div>
                       
                       {studentKardex.length === 0 ? (
                         <p className="text-sm text-slate-500 italic px-2">No observations registered for this student.</p>

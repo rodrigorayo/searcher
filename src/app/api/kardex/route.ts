@@ -1,16 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import * as xlsx from 'xlsx';
 
-const KARDEX_URL = 'https://docs.google.com/spreadsheets/d/1AARv6ffIfCNMiFBq-jDG75YZoZZS86LD7pR6JNzkH2M/export?format=xlsx';
+const OFFICIAL_KARDEX_URL = 'https://docs.google.com/spreadsheets/d/1AARv6ffIfCNMiFBq-jDG75YZoZZS86LD7pR6JNzkH2M/export?format=xlsx';
+const COPY_KARDEX_URL = 'https://docs.google.com/spreadsheets/d/1fnCaJ_H1VSVXSMUHTGShZ4c5KCYm-S5gzMzpEO_p2cw/export?format=xlsx';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const source = searchParams.get('source');
+    
+    // Default to official unless explicitly specified as 'copy'
+    const targetUrl = source === 'copy' ? COPY_KARDEX_URL : OFFICIAL_KARDEX_URL;
+
     // Append timestamp to ensure Google Sheets never serves a stale cached export
     const timestamp = Date.now();
-    const response = await fetch(`${KARDEX_URL}&_t=${timestamp}`, { cache: 'no-store' });
+    const response = await fetch(`${targetUrl}&_t=${timestamp}`, { cache: 'no-store' });
     const arrayBuffer = await response.arrayBuffer();
     
     const workbook = xlsx.read(arrayBuffer, { type: 'buffer' });
