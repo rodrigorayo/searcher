@@ -24,6 +24,38 @@ interface KardexRecord {
   teacher: string;
 }
 
+// Helper to normalize strings (removes accents, punctuation, etc.)
+function cleanString(str: string) {
+  return String(str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .trim();
+}
+
+function matchesStudent(name1: string, name2: string) {
+  const c1 = cleanString(name1);
+  const c2 = cleanString(name2);
+  if (!c1 || !c2) return false;
+  if (c1 === c2) return true;
+  if (c1.includes(c2) || c2.includes(c1)) return true;
+
+  const tokens1 = c1.split(/\s+/).filter(t => t.length > 2);
+  const tokens2 = c2.split(/\s+/).filter(t => t.length > 2);
+
+  if (tokens1.length === 0 || tokens2.length === 0) return false;
+
+  const shared = tokens1.filter(t => tokens2.includes(t));
+  const minTokens = Math.min(tokens1.length, tokens2.length);
+
+  if (minTokens >= 2 && shared.length >= minTokens) return true;
+  if (shared.length >= 3) return true;
+  if (shared.length >= 2 && (shared.length / minTokens) >= 0.66) return true;
+
+  return false;
+}
+
 export default function Home() {
   const [students, setStudents] = useState<Student[]>([]);
   const [kardex, setKardex] = useState<KardexRecord[]>([]);
@@ -32,9 +64,10 @@ export default function Home() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
+    const timestamp = Date.now();
     Promise.all([
-      fetch('/api/students').then(res => res.json()),
-      fetch('/api/kardex').then(res => res.json())
+      fetch(`/api/students?_t=${timestamp}`, { cache: 'no-store' }).then(res => res.json()),
+      fetch(`/api/kardex?_t=${timestamp}`, { cache: 'no-store' }).then(res => res.json())
     ]).then(([studentsData, kardexData]) => {
       setStudents(studentsData);
       setKardex(kardexData);
@@ -48,22 +81,18 @@ export default function Home() {
   const filteredStudents = search.trim() === '' 
     ? [] 
     : students.filter(s => {
-        const searchTerms = search.toLowerCase().split(/\s+/).filter(Boolean);
-        const studentName = s.name.toLowerCase();
-        const teacherName = s.teacher.toLowerCase();
+        const searchTerms = cleanString(search).split(/\s+/).filter(Boolean);
+        const studentName = cleanString(s.name);
+        const teacherName = cleanString(s.teacher);
         
         return searchTerms.every(term => 
           studentName.includes(term) || teacherName.includes(term)
         );
       }).slice(0, 50);
 
-  // Helper to get kardex for a specific student
+  // Helper to get kardex for a specific student with smart matching
   const getStudentKardex = (studentName: string) => {
-    const normalizedTarget = studentName.toLowerCase().trim();
-    return kardex.filter(k => {
-        const kName = String(k.student).toLowerCase().trim();
-        return kName === normalizedTarget || normalizedTarget.includes(kName) || kName.includes(normalizedTarget);
-    });
+    return kardex.filter(k => matchesStudent(studentName, k.student));
   };
 
   return (

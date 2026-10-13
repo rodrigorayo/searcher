@@ -3,16 +3,22 @@ import * as xlsx from 'xlsx';
 
 const KARDEX_URL = 'https://docs.google.com/spreadsheets/d/1AARv6ffIfCNMiFBq-jDG75YZoZZS86LD7pR6JNzkH2M/export?format=xlsx';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
-    const response = await fetch(KARDEX_URL, { next: { revalidate: 60 } });
+    // Append timestamp to ensure Google Sheets never serves a stale cached export
+    const timestamp = Date.now();
+    const response = await fetch(`${KARDEX_URL}&_t=${timestamp}`, { cache: 'no-store' });
     const arrayBuffer = await response.arrayBuffer();
     
     const workbook = xlsx.read(arrayBuffer, { type: 'buffer' });
     const kardex = [];
 
-    for (const sheetName of ['Mañana', 'Tarde']) {
-      if (!workbook.Sheets[sheetName]) continue;
+    for (const sheetName of workbook.SheetNames) {
+      // Skip search tabs or empty sheets
+      if (sheetName.toLowerCase().includes('buscar') || sheetName.toLowerCase().includes('hoja 3')) continue;
       
       const sheet = workbook.Sheets[sheetName];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +70,11 @@ export async function GET() {
     // Sort descending (newest first)
     kardex.sort((a, b) => b.rawDate - a.rawDate);
 
-    return NextResponse.json(kardex);
+    return NextResponse.json(kardex, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      },
+    });
   } catch (error) {
     console.error('Error fetching Kardex:', error);
     return NextResponse.json({ error: 'Failed to fetch kardex' }, { status: 500 });

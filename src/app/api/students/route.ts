@@ -4,9 +4,13 @@ import * as xlsx from 'xlsx';
 // Google Sheet Export URL
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1IoRZZvWUbh_sp3xjkRNf9ZxL5QG0dAazX_BeKKntgWk/export?format=xlsx';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
-    const response = await fetch(SHEET_URL, { next: { revalidate: 60 } }); // Cache for 60 seconds
+    const timestamp = Date.now();
+    const response = await fetch(`${SHEET_URL}&_t=${timestamp}`, { cache: 'no-store' });
     const arrayBuffer = await response.arrayBuffer();
     
     // Parse the Excel file
@@ -91,7 +95,11 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(students);
+    return NextResponse.json(students, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      },
+    });
   } catch (error) {
     console.error('Error fetching/parsing Excel:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
