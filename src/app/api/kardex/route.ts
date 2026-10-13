@@ -74,10 +74,22 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Sort descending (newest first)
-    kardex.sort((a, b) => b.rawDate - a.rawDate);
+    // Deduplicate records with identical student, date, observation, and detail
+    const seen = new Set<string>();
+    const uniqueKardex = [];
 
-    return NextResponse.json(kardex, {
+    for (const record of kardex) {
+      const key = `${record.student}|${record.date}|${record.observation}|${record.detail}|${record.group}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueKardex.push(record);
+      }
+    }
+
+    // Sort descending (newest first)
+    uniqueKardex.sort((a, b) => b.rawDate - a.rawDate);
+
+    return NextResponse.json(uniqueKardex, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
       },
